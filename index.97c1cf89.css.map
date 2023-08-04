@@ -1,1 +1,0 @@
-{"mappings":"ACAA,oBAIA","sources":["index.97c1cf89.css","src/main.css"],"sourcesContent":[".error {\n  display: none;\n}\n\nimg {\n  width: 600px;\n}\n\n/*# sourceMappingURL=index.97c1cf89.css.map */\n",".error {\n    display: none;\n}\n\nimg {\n    width: 600px;\n    \n}"],"names":[],"version":3,"file":"index.97c1cf89.css.map"}
