@@ -1,16 +1,15 @@
 import { fetchBreeds, fetchCatByBreed } from './cat-api';
-import SlimSelect from 'slim-select'
+import Notiflix from 'notiflix';
 
 const breedSelect = document.querySelector('.breed-select');
 const catInfo = document.querySelector('.cat-info');
 const loaderEl = document.querySelector('.loader');
-const errorEl = document.querySelector('.error');
 
 loaderEl.style.display = 'block';
 catInfo.style.display = 'none';
-errorEl.style.display = 'none';
 
-// Викликаємо ф-цію з даними про породи котів та виводимо їх у select
+let error = null; // Змінна error оголошена на рівні зовнішнього блоку і буде доступна в обох блоках
+
 fetchBreeds().then(breedsData => {
     breedsData.forEach(breed => {
         const optionEl = document.createElement('option');
@@ -19,19 +18,19 @@ fetchBreeds().then(breedsData => {
         breedSelect.appendChild(optionEl);
     });
     catInfo.style.display = 'block';
-}).catch(error => {
+}).catch(err => {
+    error = err; // Присвоюємо помилку змінній error
     breedSelect.style.display = 'none';
-    errorEl.style.display = 'block'; // Відображаємо блок з помилкою
+    Notiflix.Notify.failure('Oops! Something went wrong! Try reloading the page!');
 }).finally(() => {
     loaderEl.style.display = 'none';
-    if (!errorEl.style.display) {
-        breedSelect.style.display = 'block'; // Зробити селектор видимим після завершення запиту, якщо немає помилки
+    if (!error) {
+        breedSelect.style.display = 'block';
     }
 });
 
-// Ф-ція для виведення даних у div 'cat-info'
 function displayCatInfo(data) {
-    const catData = data[0]; // Отримуємо перший об'єкт з масиву даних
+    const catData = data[0];
     catInfo.innerHTML = `
     <h2>${catData.breeds[0].name}</h2>
     <img src="${catData.url}" alt="${catData.breeds[0].name}"/>
@@ -40,20 +39,18 @@ function displayCatInfo(data) {
     `;
 }
 
-// Викликаємо ф-цію для вибраної породи кота при зміні значення select
 breedSelect.addEventListener('change', () => {
     const selectedBreedId = breedSelect.value;
-
-    // Очищаємо блок 'cat-info' перед новим запитом
     catInfo.innerHTML = '';
 
-    loaderEl.style.display = 'block'; // Показати лоадер перед початком запиту
+    loaderEl.style.display = 'block';
     fetchCatByBreed(selectedBreedId).then(data => {
         displayCatInfo(data);
     }).finally(() => {
-        loaderEl.style.display = 'none'; // Приховати лоадер після завершення запиту
+        loaderEl.style.display = 'none';
     });
 });
+
 
 
 
